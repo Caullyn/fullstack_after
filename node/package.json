@@ -1,0 +1,9 @@
+{
+    "name": "fullyawesome",
+    "main": "login.html",
+    "window": {
+        "toolbar": false,
+        "width": 500,
+        "height": 200
+    }
+}

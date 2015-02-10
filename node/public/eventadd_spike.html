@@ -1,0 +1,327 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title></title>
+    <link rel="stylesheet" href="css/bw.css">
+        
+    <script language="Javascript" type="text/javascript" src="js/jquery-1.9.1.js"></script>
+<style>
+</style>
+<script type="text/javascript">
+    var clean_uri = location.protocol + "//" + location.host + location.pathname;
+    window.history.replaceState({}, document.title, clean_uri);
+</script>
+<script type="text/javascript">
+var datefield=document.createElement("input")
+datefield.setAttribute("type", "date")
+if (datefield.type!="date"){ //if browser doesn't support input type="date", load files for jQuery UI Date Picker
+    document.write('<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css" />\n')
+    document.write('<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"><\/script>\n')
+    document.write('<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"><\/script>\n')
+}
+</script>
+<script>
+if (datefield.type!="date"){ //if browser doesn't support input type="date", initialize date picker widget:
+    jQuery(function($){ //on document.ready
+        $('#datepick').datepicker();
+    })
+}
+</script>
+
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
+
+<script src="js/vendor/jquery-2.1.0.min.js"></script>
+<script src="js/helper.js"></script>
+<script src="js/main.js"></script>
+<script src="js/uri.js"></script>
+
+<script type="text/javascript">
+
+$(document).ready( function() {
+function initialize() {
+    var mapOptions = {
+        center: new google.maps.LatLng(
+         36.1389, -5.355),
+        zoom: 15
+    };
+    
+    var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+    var input = (document.getElementById('inputLocation'));  
+    var inputCity = (document.getElementById('inputCity'));  
+    var optionsCity = {
+        types: ['(regions)']
+    };
+    autoCity = new google.maps.places.Autocomplete(inputCity, optionsCity);
+    var autocomplete = new google.maps.places.Autocomplete(input);  
+    autocomplete.bindTo('bounds', map);
+    var infowindow = new google.maps.InfoWindow();
+    var marker = new google.maps.Marker({
+      map: map,
+      anchorPoint: new google.maps.Point(0, -29)
+    });
+    
+    google.maps.event.addListener(autoCity, 'place_changed', function() {
+        console.log(inputCity.value);        
+        var inputLocation = (document.getElementById('inputLocation'));  
+        var options = {
+            componentRestrictions: {region: inputCity.value}
+        };        
+        var autocomplete = new google.maps.places.Autocomplete(inputLocation, options);        
+        autocomplete.bindTo('bounds', map);
+    });
+    google.maps.event.addListener(autocomplete, 'place_changed', function() {
+        infowindow.close();
+        marker.setVisible(false);
+        var place = autocomplete.getPlace();
+        document.getElementById('latbox').value = place.geometry.location.lat();
+        document.getElementById('lngbox').value = place.geometry.location.lng();
+        if (!place.geometry) {
+            return;
+        }
+        // If the place has a geometry, then present it on a map.
+        if (place.geometry.viewport) {
+          map.fitBounds(place.geometry.viewport);
+        } else {
+          map.setCenter(place.geometry.location);
+          map.setZoom(17);
+        }
+        marker.setIcon(({
+          url: place.icon,
+          size: new google.maps.Size(71, 71),
+          origin: new google.maps.Point(0, 0),
+          anchor: new google.maps.Point(17, 34),
+          scaledSize: new google.maps.Size(35, 35)
+        }));
+        marker.setPosition(place.geometry.location);
+        marker.setVisible(true);
+
+        var address = '';
+        if (place.address_components) {
+          address = [
+            (place.address_components[0] && place.address_components[0].short_name || ''),
+            (place.address_components[1] && place.address_components[1].short_name || ''),
+            (place.address_components[2] && place.address_components[2].short_name || '')
+          ].join(' ');
+        }
+
+        infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
+        infowindow.open(map, marker);
+
+    })
+    
+}  
+function imgurUpload(bass) {
+
+    var auth;
+    auth = 'Client-ID bd900681799a752';
+    $.ajax({
+      url: 'https://api.imgur.com/3/upload',
+      type: 'POST',
+      headers: {
+        Authorization: 'Client-ID bd900681799a752',
+        Accept: 'application/json'
+      },
+      data: {
+        image: bass,
+        type: 'base64'
+      },
+      success: function(result) {
+        var api_url = 'http://localhost:4242/api/';
+        var email = 'colin@wotjam.com';
+        var name = document.getElementById("usereventname");
+        var desc = document.getElementById("usereventdesc");
+        var start = document.getElementById("usereventstart").value;
+        var end = document.getElementById("usereventend").value;
+        var evt_id = URI(document.evt_id).query(true).value;
+        var band = document.getElementById("usereventband");
+        var eiau_ser = [];
+        var imgur = result.data.id;
+        console.log('cool ' + imgur );
+        $.ajax({
+             type: "GET",
+             url: api_url + 'event_add_update?email=' + email + '&name=' + name + '&description=' + desc + '&start=' + start + '&end=' + end + '&evt_id=' + evt_id + '&band=' + band + '&img=' + imgur + '&img_type=jpeg',
+             datatype: 'JSON',
+             success: function (data) {  
+                eiau_ser = eval(data); 
+                window.location.assign("eventone.html?evt_id=" + eiau_ser[0]["event_id"]);   
+             },
+             error: function () {
+                alert(eiau_ser[0]["status_desc"]); 
+            }
+        })
+
+        return false;
+    }})
+}
+function gLocationSearch(bass) {
+
+    var auth;
+    auth = 'AIzaSyAhaD4HwgofkA2_9Z7fLbGB1V8Shi-S7do';
+    $.ajax({
+      url: 'https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurant&key=AIzaSyAhaD4HwgofkA2_9Z7fLbGB1V8Shi-S7do',
+      type: 'GET',
+      headers: {
+        Authorization: auth,
+        Accept: 'application/json'
+      },
+      data: {
+        query: 'restaurant'
+      },
+      success: function(result) {
+        console.log('coolio ' + JSON.stringify(result) );
+        return false;
+      },
+      error: function(req, err){ console.log('sSearch: ' + err)}
+    })
+}
+
+function loadImageFileAsURL(){
+    var filesSelected = document.getElementById("inputFileToLoad").files;
+    if (filesSelected.length > 0){
+        var fileToLoad = filesSelected[0];
+
+        var fileReader = new FileReader();
+
+        fileReader.onload = function(fileLoadedEvent) {
+            var srcData = fileLoadedEvent.target.result; 
+
+            var divTest = document.getElementById("imgTest");
+            var newImage = document.createElement('img');
+            newImage.src = srcData;
+
+            divTest.innerHTML = newImage.outerHTML;
+
+            imgurUpload(srcData.substring(23));
+        }
+        fileReader.readAsDataURL(fileToLoad);
+    }
+}
+
+function sessionCheck(){        
+    var api_url = 'http://localhost:4242/api/';
+    var sess = 0;
+    var sess_ser = [];
+    var sess_ret;
+    sess = localStorage.getItem("sess");
+    if (sess) {
+    
+        $.ajax({
+                 type: "GET",
+                 url: api_url + 'session_check?sess=' + sess,
+                 datatype: 'JSON',
+                 success: function (data) {  
+                    sess_ser = eval(data); 
+                    sess_ret = sess_ser[0]["status_id"];                        
+                 },
+                 error: function () {
+                    alert(sess_ser[0]["status_desc"]); 
+                }
+            })
+        if (sess_ret > 200) {            
+            window.location.assign("login.html");
+        };
+        return false;
+    }
+    else {
+        window.location.assign("login.html");
+    }
+        
+}
+sessionCheck();    
+google.maps.event.addDomListener(window, 'load', initialize);
+
+function addmarker () {
+    var api_url = 'http://localhost:4242/api/';
+    var aau_ser = [];
+    var map = document.getElementById('map-canvas');
+    var mapOptions = {
+        center: new google.maps.LatLng(
+         36.1389, -5.355),
+        zoom: 15
+    };
+    var $el = $('#map-canvas');
+    var map_canvas = new google.maps.Map($el[0], mapOptions);
+    var lat = map_canvas.geometry.lat()
+    console.log(lat);
+
+    var input = (document.getElementById('inputLocation'));   
+    function apc(email, pw) {
+        var email = document.getElementById("email").value;
+        var pw = document.getElementById("pw").value;
+         $.ajax({
+             async: false,
+             url: api_url + 'abuser_add_update?email=' + email + '&pw=' + pw ,
+             type: "GET",
+             dataType: 'JSON',
+             success: 
+                 function (series){
+                     apc_ser = eval(series);  
+                 },
+         });    
+        console.log(apc_ser);
+        console.log(apc_ser[0]);        
+        if (apc_ser[0]["status_id"] > 200) {                
+            alert(apc_ser[0]["status_desc"]); 
+        } else {
+            localStorage.setItem("sess", apc_ser[0]["session_id"]);
+            window.location.assign("event.html");
+        };
+        return false;
+    };
+}
+  
+});
+</script>
+
+</head>
+<body>
+    <div id="header">
+        <h1>WotJam</h1>
+    </div>
+
+<div id="section">
+    <section class="loginform cf">
+    <form name="eventadd" accept-charset="utf-8">
+    <table>
+        <tr><td>
+        <input type="text" align="middle" id="eventname" name="Name" placeholder="Event name here." size="44" required />  
+        </td></tr>
+        <tr><td>
+        <textarea id="description" name="Description" placeholder="Event Description" cols="32" rows="7"></textarea>  
+        </td></tr>
+        <tr><td>
+        <input type="date" id="usereventstart" name="datepick" placeholder="Start Date" size="20" />
+        </td></tr>
+        <tr><td>
+        <input type="date" id="usereventend" name="datepick" size="20" />
+        </td></tr>        
+        <tr><td>
+        <input id="inputFileToLoad" type="file" onchange="loadImageFileAsURL();" />
+        </td></tr>
+    </table>
+    <table>
+        <tr><td>
+        <div id="imgTest"></div>
+        </td></tr>
+        <tr><td>
+        <input type="text" id="inputLocation" size="44" autocomplete="off" />    
+        </td></tr>
+        <tr><td>
+        <input type="button" id="Create" value="Create Event" onclick="addmarker()" />
+        </td>
+        <td>
+        <input type="text" id="inputCity" autocomplete="off" />
+        </td></tr>
+    </table>
+    </form>
+    </section>  
+</div>
+
+<div id="map-canvas"></div>
+<div id="latlng">
+    <input size="20" type="text" id="latbox" name="lat" />
+    <input size="20" type="text" id="lngbox" name="lng" />
+</div>
+</body>
+</html>

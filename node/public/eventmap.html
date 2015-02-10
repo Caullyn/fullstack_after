@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title></title>
+    <link rel="stylesheet" href="css/bw.css">
+        <script src="js/vendor/jquery-2.1.0.min.js"></script>
+        <script src="js/helper.js"></script>
+        <script src="js/main.js"></script>
+    <script language="Javascript" type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<style>
+</style>
+    <script type="text/javascript">
+        var clean_uri = location.protocol + "//" + location.host + location.pathname;
+        window.history.replaceState({}, document.title, clean_uri);
+    </script>
+     <script src="http://masonry.desandro.com/masonry.pkgd.min.js"></script>
+        <script src="http://desandro.github.io/masonry/js/modernizr-transitions.js"></script>
+        <sript src="https://gist.githubusercontent.com/desandro/797120/raw/c75b3447719c817f8f213fef23eb2836f1518acc/gistfile1.js"></script>
+    <script src="http://www.pollyformaturas.com.br/js/masonry/box-maker.js"></script>
+       <script type="text/javascript" language="javascript">
+            $('#container').masonry();
+        </script>
+<script type="text/javascript" src="js/geo.js"></script>   
+<script type="text/javascript">
+ $(document).ready(function () {
+    
+    function imgLoaded() {
+        var containerImg = $( '#container' );
+        imagesLoaded( containerImg, function() {
+              msnry.layout();
+        });
+    };
+  
+    function listboxes() {
+         var api_url = 'http://localhost:4242/api/';
+         $.ajax({
+             type: "GET",
+             url: api_url + 'event_display',
+             datatype: 'JSON',
+             success: function (data) {
+ 
+                 var jsonArray = data;
+                 var boxes = "";
+                 $.each(jsonArray, function (i, box) {
+                     if(data != undefined){
+                         boxes += createbox(box.evt_id, box.evt_name, box.evt_description, box.evt_start, box.evt_end);
+                     }
+                 });
+//                  jQuery("#container").append(boxes).masonry( 'appended', boxes );
+                 
+
+             }
+         });
+    };
+
+     function createbox(evt_id, evt_name, evt_description, evt_start, evt_end) {
+        var boxHtml = "",
+            tagsHtml = "";
+        boxHtml = '' + '<div class="box" id="' + evt_id + '">' + '<div class="boxinfo">' + '<label class="boxname"><a href="' + "eventone.html?evt_id=" + evt_id + '" class="boxlink">' + evt_name + '</a></label><p>' + evt_description + '</p><p>' + evt_start + '</p></div></div>';
+        var $boxHtml = $(boxHtml);
+        var containerSizer = $( '#container' );
+        containerSizer.masonry( {
+            columnWidth:  210,
+            itemSelector: '.box'
+        } );
+        $( containerSizer ).prepend( boxHtml );
+        $( containerSizer ).masonry( 'reloadItems' );
+        $( containerSizer ).masonry( 'layout' );
+     };
+     listboxes();
+
+     $('content').fadeIn();
+ });
+ 
+
+function get_location() {
+
+    if (geo_position_js.init()) {
+        geo_position_js.getCurrentPosition(show_map, handle_error);
+    }
+
+}
+
+function show_map(position) {
+    var latitude = position.coords.latitude;
+    var longitude = position.coords.longitude;
+
+    alert("lat:" + latitude + " long:" + longitude);
+
+}
+
+function handle_error(err) {
+    alert(err.code);
+    if (err.code == 1) {
+        // user said no!
+    }
+}
+
+if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(show_map, handle_error);
+} else {
+    error('not supported');
+}
+
+</script> 
+</head>
+<body>
+    <div id="header">
+        <h1>WotJam</h1>
+    </div>
+
+
+    <div id="section">
+    <section id="section">
+
+    <div id="container" class="js-masonry" data-masonry-options='{ "columnWidth": 50, "itemSelector": ".box" }'>
+
+    </div>
+    </div>
+</body>
+</html>

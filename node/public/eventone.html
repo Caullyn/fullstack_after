@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title></title>
+    <link rel="stylesheet" href="css/bw.css">
+        
+    <script language="Javascript" type="text/javascript" src="js/jquery-1.9.1.js"></script>
+<style>
+</style>
+<script type="text/javascript">
+var datefield=document.createElement("input")
+datefield.setAttribute("type", "date")
+if (datefield.type!="date"){ //if browser doesn't support input type="date", load files for jQuery UI Date Picker
+    document.write('<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css" />\n')
+    document.write('<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"><\/script>\n')
+    document.write('<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"><\/script>\n')
+}
+</script>
+<script>
+if (datefield.type!="date"){ //if browser doesn't support input type="date", initialize date picker widget:
+    jQuery(function($){ //on document.ready
+        $('#datepick').datepicker();
+    })
+}
+</script>
+
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
+
+<script src="js/vendor/jquery-2.1.0.min.js"></script>
+<script src="js/helper.js"></script>
+<script src="js/main.js"></script>
+<script src="js/uri.js"></script>
+
+<script type="text/javascript">
+ $(document).ready(function () {
+    function evtboxes() {
+        var evt_id = window.location.search.substring(1).split("=")[1];
+        var api_url = 'http://localhost:4242/api/';
+        var conHtml = '';
+        $.ajax({
+            type: "GET",
+            url: api_url + 'event_display?evt_id=' + evt_id,
+            datatype: 'JSON',
+            success: function (data) {
+                var containerSizer = $( '#container' );
+                conHtml = '' + '<div class="box" id="' + data[0].evt_id + '">' + '<div class="boxinfo"><label class=""><label id="name">' + data[0].evt_name + '</label><p>' + data[0].evt_description + '</p><p>' + data[0].evt_start + '</p></div></div>';
+                $( containerSizer ).prepend( conHtml );
+                
+                $('content').fadeIn();
+            }
+        });
+    }
+    evtboxes();
+});         
+function initialize() {
+    var mapOptions = {
+        center: new google.maps.LatLng(
+         36.1389, -5.355),
+        zoom: 15
+    };
+    
+    var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+    var input = (document.getElementById('inputLocation'));      
+    var infowindow = new google.maps.InfoWindow();
+    var marker = new google.maps.Marker({
+      map: map,
+      anchorPoint: new google.maps.Point(0, -29)
+    });
+    
+}    
+</script>
+
+</head>
+<body>
+    <div id="header">
+        <h1>WotJam</h1>
+    </div>
+
+  <section id="content">
+  
+<div id="container" class="js-masonry" data-masonry-options='{ "columnWidth": 50, "itemSelector": ".box" }'>
+
+</div>
+<div id="map-canvas"></div>
+</section>
+</body>
+</html>

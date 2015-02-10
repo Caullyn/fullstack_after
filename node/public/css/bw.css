@@ -1,0 +1,110 @@
+html, body, #map-canvas {
+height: 100%;
+margin: 0px;
+padding: 0px
+}
+
+#header {
+    height: 51px;
+    background-color:black;
+    color:white;
+    text-align:center;
+    padding:0.1px;
+}
+#nav {
+    line-height:30px;
+    background-color:#eeeeee;
+    height:300px;
+    width:100px;
+    float:left;
+    padding:5px;	      
+}
+#section {
+    margin-left: auto ;
+    margin-right: auto ;
+    padding:10px;	 	 
+}
+
+#map-canvas {
+    width:250px;
+    height:250px;
+    margin-left: auto ;
+    margin-right: auto ;
+    padding:10px;	 	 
+}
+#footer {
+    background-color:black;
+    color:white;
+    clear:both;
+    text-align:center;
+   padding:5px;	 	 
+}
+
+#container {
+
+    padding: 5px;
+}
+
+#pac-input {
+background-color: #fff;
+padding: 0 11px 0 13px;
+width: 400px;
+font-family: Roboto;
+font-size: 15px;
+font-weight: 300;
+text-overflow: ellipsis;
+}
+
+#pac-input:focus {
+border-color: #4d90fe;
+margin-left: -1px;
+padding-left: 14px;  
+width: 401px;
+}
+
+.pac-container {
+font-family: Roboto;
+}
+
+#type-selector {
+color: #fff;
+background-color: #4d90fe;
+padding: 5px 11px 0px 11px;
+}
+
+#type-selector label {
+font-family: Roboto;
+font-size: 13px;
+font-weight: 300;
+}
+
+label {
+    text-align: right;
+}
+
+.box {
+    width: 180px;
+/*     height: 100px; */
+    float: left;
+    margin: 5px;
+    background: #CCC;
+}
+
+.displaybox {
+    width: 360px;
+/*     height: 100px; */
+    float: left;
+    margin: 5px;
+    background: #CCC;
+}
+
+.controls {
+    margin-top: 16px;
+    border: 1px solid transparent;
+    border-radius: 2px 0 0 2px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    height: 32px;
+    outline: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
