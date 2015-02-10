@@ -96,6 +96,7 @@ BEGIN;
         evt_description TEXT,
         evt_start TIMESTAMP WITH TIME ZONE NOT NULL,
         evt_end TIMESTAMP WITH TIME ZONE,
+        evt_range TSTZRANGE,
         evt_geo_id BIGINT REFERENCES geo.geo_location (geo_id) NOT NULL,
         evt_add_id BIGINT REFERENCES geo.address(add_id) NOT NULL,
         evt_created TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL, 
