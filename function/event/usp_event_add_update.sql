@@ -4,6 +4,7 @@ CREATE OR REPLACE FUNCTION event.usp_event_add_update(
     i_evt_description TEXT,
     i_evt_start TIMESTAMP WITH TIME ZONE,
     i_evt_end TIMESTAMP WITH TIME ZONE,
+    i_evt_range TSTZRANGE,
     i_evt_id BIGINT,
     i_evt_geo_id BIGINT,
     i_band TEXT[],
@@ -52,6 +53,7 @@ BEGIN
                evt_name = i_evt_name,
                evt_start = i_evt_start,
                evt_end = i_evt_end,
+               evt_range = i_evt_range,
                evt_add_id = _add_id,
                evt_modified = now()
          WHERE evt_id = i_evt_id;
@@ -65,8 +67,8 @@ BEGIN
         _status_id = 200;
         _status_desc = 'evt_id updated: ' || i_evt_id::text;
     ELSE
-        INSERT INTO event.event (evt_asr_user, evt_name, evt_description, evt_start, evt_end, evt_geo_id, evt_add_id)
-        VALUES (_user, i_evt_name, i_evt_description, i_evt_start, i_evt_end, i_evt_geo_id, _add_id)
+        INSERT INTO event.event (evt_asr_user, evt_name, evt_description, evt_start, evt_end, evt_range, evt_geo_id, evt_add_id)
+        VALUES (_user, i_evt_name, i_evt_description, i_evt_start, i_evt_end, i_evt_range, i_evt_geo_id, _add_id)
         RETURNING evt_id INTO _evt_id;
         _status_id = 200;
         _status_desc = 'evt_id inserted: ' || _evt_id::text;
