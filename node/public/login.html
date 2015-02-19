@@ -126,7 +126,8 @@ $(document).ready( function() {
                 dataType: 'JSON',
                 error: function(req, err){ console.log('login: ' + err)},
                 success: 
-                    function (series){
+                    function (series){                    
+                        window.location.assign("event.html");
                         aau_ser = eval(series);
                     },
                  
@@ -134,8 +135,8 @@ $(document).ready( function() {
             if (aau_ser[0]["status_id"] > 200) {                
                 alert(aau_ser[0]["status_desc"]); 
             } else {
-                localStorage.setItem("sess", aau_ser[0]["session_id"]);
                 window.location.assign("event.html");
+                localStorage.setItem("sess", aau_ser[0]["session_id"]);
             };
             return false;
             };
